@@ -43,6 +43,7 @@ public class AuthService {
         memberRepository.save(member);
 
         logger.info("[Result] {} 회원의 회원가입 요청", request.name());
+        // sendSignUpSlackMessage();
         return MemberMapper.entityToMemberSignupResponse(member);
     }
 
