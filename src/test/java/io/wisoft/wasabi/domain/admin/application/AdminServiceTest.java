@@ -86,15 +86,13 @@ class AdminServiceTest {
             // given
             final var request = new ApproveMemberRequest(member.getId());
 
-            given(memberRepository.findById(any())).willReturn(Optional.of(member));
-
-            final var response = new ApproveMemberResponse(request.memberId());
+            given(memberRepository.existsById(any())).willReturn(true);
 
             // when
             final var result = adminServiceImpl.approveMember(request);
 
             // then
-            assertThat(result.id()).isEqualTo(response.id());
+            assertThat(result.id()).isEqualTo(member.getId());
         }
 
         @DisplayName("존재하지 않는 유저의 승인 요청은 거절된다.")
@@ -103,7 +101,7 @@ class AdminServiceTest {
         void update_approve_fail_member_not_found(final ApproveMemberRequest request) {
 
             // given
-            given(memberRepository.findById(any())).willReturn(Optional.empty());
+            given(memberRepository.existsById(any())).willReturn(false);
 
             // when
 
