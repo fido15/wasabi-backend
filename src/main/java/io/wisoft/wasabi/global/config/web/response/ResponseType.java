@@ -10,9 +10,9 @@ public enum ResponseType {
     LOGIN_SUCCESS(HttpStatus.OK, "AUTH-S002", "Login Success"),
     SEND_AUTH_CODE_SUCCESS(HttpStatus.OK, "AUTH-S003", "Send Auth code to Email Success"),
 
-    LOGIN_FAIL(HttpStatus.BAD_REQUEST, "AUTH-F001", "Login Fail"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-F002", "Token Not Exist"),
-    FORBIDDEN(HttpStatus.FORBIDDEN, "AUTH-F003", "Member Not Activated"),
+    LOGIN_FAIL(HttpStatus.BAD_REQUEST, "AUTH-F001", "Email Or Password Do Not Match"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-F002", "Login Is Required"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "AUTH-F003", "Permission Denied"),
 
     /* 회원 - MEMBER */
     MEMBER_UPDATE_INFO_SUCCESS(HttpStatus.OK, "MEMBER-S001", "Member Update Success"),
@@ -21,7 +21,7 @@ public enum ResponseType {
     READ_MEMBER_UN_APPROVE_SUCCESS(HttpStatus.OK, "MEMBER-S004", "Read Member Unapprove Success"),
     DELETE_SIGN_UP_SUCCESS(HttpStatus.OK, "MEMBER_S005", "Delete Sign Up Requests Success"),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER-F001", "User Not Found"),
-    MEMBER_EMAIL_OVERLAP(HttpStatus.CONFLICT, "MEMBER-F003", "User Email Overlap"),
+    MEMBER_EMAIL_OVERLAP(HttpStatus.CONFLICT, "MEMBER-F002", "User Email Overlap"),
 
     /* 게시글 - BOARD */
     BOARD_WRITE_SUCCESS(HttpStatus.CREATED, "BOARD-S001", "Board Write Success"),
@@ -34,7 +34,7 @@ public enum ResponseType {
 
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-F001", "Board Not Found"),
     SORT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOARD-F002", "Sort Type Invalid"),
-    BOARD_IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "BOARD_F003", "Board Image Upload Fail"),
+    BOARD_IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "BOARD-F003", "Board Image Upload Fail"),
 
     /* 좋아요 - LIKE */
     LIKE_REGISTER_SUCCESS(HttpStatus.CREATED, "LIKE-S001", "Like Register Success"),
