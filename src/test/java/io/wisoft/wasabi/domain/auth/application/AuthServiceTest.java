@@ -4,16 +4,12 @@ import autoparams.AutoSource;
 import io.wisoft.wasabi.domain.auth.exception.LoginFailException;
 import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
 import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.VerifyEmailRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.VerifyEmailResponse;
-import io.wisoft.wasabi.domain.member.application.MemberMapper;
 import io.wisoft.wasabi.domain.member.application.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
 import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.bcrypt.BcryptEncoder;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
-import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,8 +37,13 @@ class AuthServiceTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @Mock
-    private EmailService emailService;
+
+    @BeforeAll
+    static void setup() {
+        //
+        new BcryptEncoder("$2a$10$wisoftwasabiprojectsaltkey02023");
+//        new BcryptEncoder("$2a$10$wisoftwasabiprojectsaltkey02023");
+    }
 
     @Nested
     @DisplayName("회원 가입")
@@ -54,8 +55,9 @@ class AuthServiceTest {
         void signUp_success(final SignupRequest request) {
 
             //given
-            given(memberRepository.existsByEmail(any())).willReturn(false);
 
+            given(memberRepository.existsByEmail(request.email())).willReturn(false);
+          
             //when
             final var response = authService.signup(request);
 
@@ -83,18 +85,29 @@ class AuthServiceTest {
     @DisplayName("로그인")
     class Login {
 
-        // [java.lang.IllegalArgumentException: Invalid salt version] 발생 - 추후 처리
-//        @ParameterizedTest
-//        @AutoSource
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("이메일, 비밀번호가 일치하여 로그인에 성공한다.")
         void login_success(final Member member) {
 
             //given
             final var ACCESS_TOKEN = "accessToken";
-            final var request = new LoginRequest(member.getEmail(), member.getPassword());
+            final var mockMember = new Member(
+                member.getEmail(),
+                BcryptEncoder.encrypt(member.getPassword()),
+                member.getName(),
+                member.getPhoneNumber(),
+                false,
+                member.getRole(),
+                member.getReferenceUrl(),
+                member.getPart(),
+                member.getOrganization(),
+                member.getMotto()
+            );
+            final var request = new LoginRequest(mockMember.getEmail(), member.getPassword());
 
-            given(memberRepository.findMemberByEmail(request.email())).willReturn(Optional.of(member));
-            given(jwtTokenProvider.createAccessToken(eq(member.getId()), eq(member.getName()), eq(member.getRole()), anyBoolean())).willReturn(ACCESS_TOKEN);
+            given(memberRepository.findMemberByEmail(request.email())).willReturn(Optional.of(mockMember));
+            given(jwtTokenProvider.createAccessToken(eq(mockMember.getId()), eq(mockMember.getName()), eq(mockMember.getRole()), anyBoolean())).willReturn(ACCESS_TOKEN);
 
             //when
             final var response = authService.login(request);
@@ -117,9 +130,8 @@ class AuthServiceTest {
             assertThrows(LoginFailException.class, () -> authService.login(request));
         }
 
-        // [java.lang.IllegalArgumentException: Invalid salt version] 발생 - 추후 처리
-//        @ParameterizedTest
-//        @AutoSource
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("이메일은 존재하지만, 비밀번호가 존재하지 않아 로그인에 실패한다.")
         void login_fail_invalid_password(final Member member) {
 

@@ -130,14 +130,12 @@ class BoardIntegrationTest extends IntegrationTest {
         void read_my_like_boards(final List<WriteBoardRequest> requests) {
 
             // given
+            memberRepository.save(member);
+
+            new Like(member, board1);
+            new Like(member, board2);
+          
             final String accessToken = adminLogin();
-
-            final List<Long> boardIds = registerBoards(accessToken, requests);
-
-            final List<Long> likedBoardIds = boardIds.stream()
-                .filter(id -> id % 2 == 1)
-                .toList();
-            likedBoardIds.forEach(boardId -> registerLike(accessToken, boardId));
 
             // when
             final var result = readMyLikeBoards(accessToken);
