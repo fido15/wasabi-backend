@@ -22,8 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +36,7 @@ class AuthServiceTest {
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+
 
     @BeforeAll
     static void setup() {
@@ -57,12 +57,12 @@ class AuthServiceTest {
             //given
 
             given(memberRepository.existsByEmail(request.email())).willReturn(false);
-
+          
             //when
             final var response = authService.signup(request);
 
             //then
-                assertThat(response).isNotNull();
+            assertThat(response).isNotNull();
         }
 
 
@@ -143,6 +143,29 @@ class AuthServiceTest {
 
             //then
             assertThrows(LoginFailException.class, () -> authService.login(request));
+        }
+    }
+
+    @Nested
+    @DisplayName("이메일 인증")
+    class VerifyEmail {
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("이메일 인증을 위한 인증 코드 전송 후 성공적으로 인증 코드가 반환된다.")
+        void verify_email_success(final VerifyEmailRequest request) {
+
+            // given
+            given(emailService.sendSimpleMessage(anyString())).willReturn("000000");
+
+            // when
+            final var result = authService.verifyEmail(request);
+
+            // then
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result.authCode()).isEqualTo("000000");
+            });
         }
     }
 }

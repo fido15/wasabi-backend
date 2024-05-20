@@ -1,10 +1,6 @@
 spring:
   profiles:
-    include: jwt, bcrypt, aws, slack
-    #    active: local
-    group:
-      dev: log-dev
-      prod: log-prod
-      test: test
+    include: config
+    active: dev
 logging.level:
   org.hibernate.SQL: debug

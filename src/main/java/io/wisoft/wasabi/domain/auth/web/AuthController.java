@@ -1,10 +1,7 @@
 package io.wisoft.wasabi.domain.auth.web;
 
 import io.wisoft.wasabi.domain.auth.application.AuthService;
-import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.LoginResponse;
-import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.SignupResponse;
+import io.wisoft.wasabi.domain.auth.web.dto.*;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
@@ -29,10 +26,10 @@ public class AuthController {
         final SignupResponse data = authService.signup(request);
 
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.SIGN_UP_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.SIGN_UP_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -41,8 +38,21 @@ public class AuthController {
         final LoginResponse data = authService.login(request);
 
         return ResponseEntity.ofNullable(
+                Response.of(
+                        ResponseType.LOGIN_SUCCESS,
+                        data
+                )
+        );
+    }
+
+    @PostMapping("/mail")
+    public ResponseEntity<Response<VerifyEmailResponse>> verifyEmail(@RequestBody @Valid final VerifyEmailRequest request) {
+
+        final VerifyEmailResponse data = authService.verifyEmail(request);
+
+        return ResponseEntity.ofNullable(
             Response.of(
-                ResponseType.LOGIN_SUCCESS,
+                ResponseType.SEND_AUTH_CODE_SUCCESS,
                 data
             )
         );
